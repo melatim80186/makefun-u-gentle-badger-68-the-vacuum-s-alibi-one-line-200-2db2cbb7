@@ -7,13 +7,25 @@ Deterministic, no network, same bytes on every run.
 
 import os
 
-LINE = "I keep one spot dirty. It is the before photo."
+# The line, as named segments joined at runtime: the setup states the
+# vacuum's deliberate policy, the punch names what the dirt is for.
+_SETUP = "I keep one spot dirty."
+_PUNCH = "It is the before photo."
+
+LINE = " ".join((_SETUP, _PUNCH))
 
 OUTPUT_PATH = "/output/entry.txt"
 
 
 def main() -> None:
     text = LINE
+    # Segments must join cleanly: exactly one space, no stray
+    # whitespace, each segment a single sentence ending in a period.
+    assert text == _SETUP + " " + _PUNCH, "segments did not join cleanly"
+    assert _SETUP.endswith(".") and _PUNCH.endswith("."), (
+        "each segment must end with a period"
+    )
+    assert text == text.strip(), "entry has leading/trailing whitespace"
     # Pre-write self-check: the gate wants UTF-8 text of 1-200
     # characters, not only whitespace, on a single line.
     encoded = text.encode("utf-8")
